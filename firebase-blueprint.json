@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "Company": {
+      "title": "Empresa",
+      "description": "Información de la MIPYME atendida por el CSTD.",
+      "type": "object",
+      "properties": {
+        "ruc": { "type": "string", "description": "RUC de la empresa (11 dígitos)." },
+        "name": { "type": "string", "description": "Razón social o nombre comercial." },
+        "sector": { "type": "string", "description": "Sector económico (e.g., Agro, Comercio, Manufactura)." },
+        "contactName": { "type": "string", "description": "Nombre del contacto principal." },
+        "email": { "type": "string", "description": "Correo electrónico de contacto." },
+        "phone": { "type": "string", "description": "Teléfono de contacto." },
+        "maturityLevel": { "type": "string", "enum": ["Inicial", "Básico", "Intermedio", "Avanzado"], "description": "Nivel de madurez digital actual." },
+        "status": { "type": "string", "enum": ["Sensibilizada", "Diagnosticada", "En Transformación", "Transformada"], "description": "Estado en el proceso CSTD." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ruc", "name", "email", "status"]
+    },
+    "Diagnostic": {
+      "title": "Diagnóstico Digital",
+      "description": "Resultados del formulario de madurez digital.",
+      "type": "object",
+      "properties": {
+        "companyId": { "type": "string", "description": "ID de la empresa vinculada." },
+        "answers": { "type": "object", "description": "Respuestas al cuestionario dinámico." },
+        "score": { "type": "number", "description": "Puntaje total obtenido." },
+        "maturityLevel": { "type": "string", "description": "Nivel calculado (e.g., Inicial)." },
+        "roadmap": { "type": "string", "description": "Hoja de ruta personalizada generada por IA." },
+        "impactReport": { "type": "string", "description": "Resumen de impacto esperado." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyId", "answers", "maturityLevel"]
+    },
+    "Solution": {
+      "title": "Solución Digital",
+      "description": "Proveedor o herramienta del Marketplace.",
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string", "description": "Nombre del proveedor." },
+        "category": { "type": "string", "description": "Categoría (ERP, IA, E-commerce, etc.)." },
+        "description": { "type": "string", "description": "Descripción de la solución." },
+        "website": { "type": "string", "description": "Enlace a la herramienta." },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["provider", "category", "description"]
+    },
+    "Indicator": {
+      "title": "Indicador de Impacto",
+      "description": "Métricas agregadas para el dashboard.",
+      "type": "object",
+      "properties": {
+        "month": { "type": "string", "description": "Mes del reporte (YYYY-MM)." },
+        "sensitized": { "type": "integer", "description": "Empresas sensibilizadas." },
+        "diagnosed": { "type": "integer", "description": "Empresas diagnosticadas." },
+        "transformed": { "type": "integer", "description": "Empresas transformadas." },
+        "costReduction": { "type": "number", "description": "Ahorro total reportado." },
+        "salesIncrease": { "type": "number", "description": "Incremento total en ventas." }
+      },
+      "required": ["month"]
+    }
+  },
+  "firestore": {
+    "/companies/{companyId}": { "schema": "Company", "description": "Directorio de empresas atendidas." },
+    "/diagnostics/{diagnosticId}": { "schema": "Diagnostic", "description": "Historial de diagnósticos realizados." },
+    "/solutions/{solutionId}": { "schema": "Solution", "description": "Marketplace de herramientas digitales." },
+    "/indicators/{indicatorId}": { "schema": "Indicator", "description": "Datos históricos para monitoreo mensual." }
+  }
+}

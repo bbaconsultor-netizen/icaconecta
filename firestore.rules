@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Companies: CRM access
+    match /companies/{companyId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Diagnostics: Results and reports
+    match /diagnostics/{diagnosticId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Solutions: Marketplace directory
+    match /solutions/{solutionId} {
+      allow read: if true; // Public marketplace
+      allow write: if isAuthenticated(); // Only staff can add solutions
+    }
+
+    // Indicators: Dashboard data
+    match /indicators/{indicatorId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}
