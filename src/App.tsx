@@ -7,7 +7,10 @@ import {
   ShoppingBag, 
   LogOut, 
   Menu, 
-  TrendingUp
+  TrendingUp,
+  Settings,
+  ShieldAlert,
+  BookOpen
 } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -18,6 +21,8 @@ import Dashboard from './components/Dashboard';
 import CRM from './components/CRM';
 import DiagnosticForm from './components/DiagnosticForm';
 import Marketplace from './components/Marketplace';
+import Courses from './components/Courses';
+import AdminPanel from './components/AdminPanel';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -57,8 +62,8 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <TrendingUp className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-slate-900 mb-2 italic serif">CSTD Perú</h1>
-          <p className="text-slate-600 mb-8">Centro de Servicios de Transformación Digital</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2 italic serif">Cite Nazca</h1>
+          <p className="text-slate-600 mb-8">Centro de Innovación Productiva y Transferencia Tecnológica</p>
           <button 
             onClick={handleLogin}
             className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
@@ -69,6 +74,8 @@ export default function App() {
       </div>
     );
   }
+
+  const isAdmin = user?.email === 'bbaconsultor@gmail.com';
 
   return (
     <Router>
@@ -82,7 +89,7 @@ export default function App() {
           <div className="p-6">
             <h2 className="text-xl font-bold flex items-center gap-2 italic serif">
               <TrendingUp className="text-indigo-400" />
-              CSTD Perú
+              Cite Nazca
             </h2>
           </div>
           
@@ -91,6 +98,10 @@ export default function App() {
             <SidebarLink to="/crm" icon={<Users size={20} />} label="Gestión CRM" onClick={() => setIsSidebarOpen(false)} />
             <SidebarLink to="/diagnostic" icon={<ClipboardCheck size={20} />} label="Diagnóstico" onClick={() => setIsSidebarOpen(false)} />
             <SidebarLink to="/marketplace" icon={<ShoppingBag size={20} />} label="Marketplace" onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="Cursos" onClick={() => setIsSidebarOpen(false)} />
+            {isAdmin && (
+              <SidebarLink to="/admin" icon={<Settings size={20} />} label="Administración" onClick={() => setIsSidebarOpen(false)} />
+            )}
           </nav>
 
           <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
@@ -126,6 +137,8 @@ export default function App() {
               <Route path="/crm" element={<CRM />} />
               <Route path="/diagnostic" element={<DiagnosticForm />} />
               <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/courses" element={<Courses />} />
+              {isAdmin && <Route path="/admin" element={<AdminPanel />} />}
             </Routes>
           </div>
         </main>

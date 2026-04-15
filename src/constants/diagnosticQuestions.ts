@@ -303,8 +303,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas PERÚ COMPRAS (Catálogos Electrónicos)?',
         description: 'Permite vender al Estado de forma ágil y electrónica sin procesos de selección clásicos.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -312,8 +315,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas PRODUCE (Produce Virtual / Kit Digital)?',
         description: 'Acceso a vouchers de innovación, servicios de CITEs y digitalización para MIPYMES.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -321,8 +327,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas OSCE (SEACE - Sistema Electrónico de Contrataciones)?',
         description: 'Acceso a todas las convocatorias públicas a nivel nacional para proveer bienes y servicios.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -330,8 +339,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas RNP (Registro Nacional de Proveedores)?',
         description: 'Requisito digital obligatorio para contratar con el Estado por montos mayores a 1 UIT.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -339,8 +351,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas SUNAT (App Emprender / Factura Electrónica)?',
         description: 'Gestión tributaria móvil y emisión de comprobantes autorizados en tiempo real.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -348,8 +363,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas SUNARP (Síguelo / Alerta Registral)?',
         description: 'Consulta de títulos en trámite y protección contra fraude inmobiliario o mercantil.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -357,8 +375,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas VUCE (Ventanilla Única de Comercio Exterior)?',
         description: 'Digitalización de trámites para exportación e importación con diversas entidades públicas.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       },
       {
@@ -366,8 +387,11 @@ export const diagnosticCategories: Category[] = [
         text: '¿Utilizas PAGALO.PE (Plataforma de Pagos del BN)?',
         description: 'Pago de tasas y arbitrios de diversas entidades estatales sin ir al banco físico.',
         options: [
-          { value: 5, label: 'Sí' },
-          { value: 1, label: 'No' }
+          { value: 1, label: 'No la conozco' },
+          { value: 2, label: 'He escuchado de ella pero no la uso' },
+          { value: 3, label: 'Conozco sus funciones y la uso ocasionalmente' },
+          { value: 4, label: 'La conozco bien y la uso regularmente' },
+          { value: 5, label: 'Dominio experto e integración total en el negocio' }
         ]
       }
     ]

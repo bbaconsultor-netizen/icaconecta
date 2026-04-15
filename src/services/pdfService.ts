@@ -14,7 +14,7 @@ export const generatePDFReport = (result: DiagnosticResult, companyName: string,
   doc.setFontSize(22);
   doc.text('PLAN DE TRANSFORMACIÓN DIGITAL', 20, 25);
   doc.setFontSize(10);
-  doc.text(`CSTD PERÚ - INFORME PARA: ${companyName.toUpperCase()}`, 20, 32);
+  doc.text(`CITE NAZCA - INFORME PARA: ${companyName.toUpperCase()}`, 20, 32);
 
   // Summary Cards
   doc.setTextColor(15, 23, 42);
@@ -126,7 +126,7 @@ export const generatePDFReport = (result: DiagnosticResult, companyName: string,
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150);
-    doc.text(`Página ${i} de ${pageCount} - Generado por CSTD Perú con Inteligencia Artificial`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+    doc.text(`Página ${i} de ${pageCount} - Generado por CITE Nazca con Inteligencia Artificial`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
   }
 
   doc.save(`Plan_Transformacion_${companyName.replace(/\s+/g, '_')}.pdf`);

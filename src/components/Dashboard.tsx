@@ -11,30 +11,54 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { TrendingUp, Users, ClipboardCheck, CheckCircle } from 'lucide-react';
+import { TrendingUp, Users, ClipboardCheck, CheckCircle, Building2 } from 'lucide-react';
+import { auth } from '../firebase';
 import { getCompanies, getIndicators } from '../services/dbService';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
+    total: 0,
     sensitized: 0,
     diagnosed: 0,
     transforming: 0,
     transformed: 0
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const companies = await getCompanies();
-      const counts = {
-        sensitized: companies.filter((c: any) => c.status === 'Sensibilizada').length,
-        diagnosed: companies.filter((c: any) => c.status === 'Diagnosticada').length,
-        transforming: companies.filter((c: any) => c.status === 'En Transformación').length,
-        transformed: companies.filter((c: any) => c.status === 'Transformada').length
-      };
-      setStats(counts);
+      setLoading(true);
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const isAdmin = user.email === 'bbaconsultor@gmail.com';
+        const companies = await getCompanies(isAdmin ? undefined : user.uid);
+        
+        const counts = {
+          total: companies.length,
+          sensitized: companies.filter((c: any) => c.status === 'Sensibilizada').length,
+          diagnosed: companies.filter((c: any) => c.status === 'Diagnosticada').length,
+          transforming: companies.filter((c: any) => c.status === 'En Transformación').length,
+          transformed: companies.filter((c: any) => c.status === 'Transformada').length
+        };
+        setStats(counts);
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchStats();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   const data = [
     { name: 'Sensibilizadas', value: stats.sensitized },
@@ -50,7 +74,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard de Indicadores</h1>
-          <p className="text-slate-500">Monitoreo en tiempo real del impacto CSTD.</p>
+          <p className="text-slate-500">Monitoreo en tiempo real del impacto CITE Nazca.</p>
         </div>
         <div className="bg-white px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600">
           Marzo 2026
@@ -58,7 +82,8 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <StatCard icon={<Building2 className="text-slate-600" />} label="Total Empresas" value={stats.total} color="bg-slate-50" />
         <StatCard icon={<TrendingUp className="text-indigo-600" />} label="Sensibilizadas" value={stats.sensitized} color="bg-indigo-50" />
         <StatCard icon={<ClipboardCheck className="text-violet-600" />} label="Diagnosticadas" value={stats.diagnosed} color="bg-violet-50" />
         <StatCard icon={<Users className="text-pink-600" />} label="En Proceso" value={stats.transforming} color="bg-pink-50" />

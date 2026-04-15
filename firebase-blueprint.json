@@ -2,7 +2,7 @@
   "entities": {
     "Company": {
       "title": "Empresa",
-      "description": "Información de la MIPYME atendida por el CSTD.",
+      "description": "Información de la MIPYME atendida por el CITE Nazca.",
       "type": "object",
       "properties": {
         "ruc": { "type": "string", "description": "RUC de la empresa (11 dígitos)." },
@@ -12,7 +12,7 @@
         "email": { "type": "string", "description": "Correo electrónico de contacto." },
         "phone": { "type": "string", "description": "Teléfono de contacto." },
         "maturityLevel": { "type": "string", "enum": ["Inicial", "Básico", "Intermedio", "Avanzado"], "description": "Nivel de madurez digital actual." },
-        "status": { "type": "string", "enum": ["Sensibilizada", "Diagnosticada", "En Transformación", "Transformada"], "description": "Estado en el proceso CSTD." },
+        "status": { "type": "string", "enum": ["Sensibilizada", "Diagnosticada", "En Transformación", "Transformada"], "description": "Estado en el proceso CITE Nazca." },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
@@ -20,10 +20,11 @@
     },
     "Diagnostic": {
       "title": "Diagnóstico Digital",
-      "description": "Resultados del formulario de madurez digital.",
+      "description": "Resultados del formulario de madurez digital o marketing digital.",
       "type": "object",
       "properties": {
         "companyId": { "type": "string", "description": "ID de la empresa vinculada." },
+        "type": { "type": "string", "enum": ["digital", "marketing"], "description": "Tipo de diagnóstico realizado." },
         "answers": { "type": "object", "description": "Respuestas al cuestionario dinámico." },
         "score": { "type": "number", "description": "Puntaje total obtenido." },
         "maturityLevel": { "type": "string", "description": "Nivel calculado (e.g., Inicial)." },
@@ -59,12 +60,26 @@
         "salesIncrease": { "type": "number", "description": "Incremento total en ventas." }
       },
       "required": ["month"]
+    },
+    "Course": {
+      "title": "Curso",
+      "description": "Material educativo por dimensión digital.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Título del curso." },
+        "description": { "type": "string", "description": "Descripción del contenido." },
+        "url": { "type": "string", "description": "Enlace al curso o material." },
+        "dimension": { "type": "string", "enum": ["Gestión", "Marketing", "E-commerce", "Datos", "Automatizacion", "Infraestructura", "IA", "Plataformas del Estado", "Otros"], "description": "Dimensión a la que pertenece." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "url", "dimension"]
     }
   },
   "firestore": {
     "/companies/{companyId}": { "schema": "Company", "description": "Directorio de empresas atendidas." },
     "/diagnostics/{diagnosticId}": { "schema": "Diagnostic", "description": "Historial de diagnósticos realizados." },
     "/solutions/{solutionId}": { "schema": "Solution", "description": "Marketplace de herramientas digitales." },
-    "/indicators/{indicatorId}": { "schema": "Indicator", "description": "Datos históricos para monitoreo mensual." }
+    "/indicators/{indicatorId}": { "schema": "Indicator", "description": "Datos históricos para monitoreo mensual." },
+    "/courses/{courseId}": { "schema": "Course", "description": "Material educativo por dimensión." }
   }
 }

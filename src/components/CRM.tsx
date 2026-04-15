@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Mail, Phone, Building2, Tag } from 'lucide-react';
+import { auth } from '../firebase';
 import { getCompanies, addCompany } from '../services/dbService';
 
 export default function CRM() {
@@ -21,7 +22,14 @@ export default function CRM() {
   }, []);
 
   const fetchCompanies = async () => {
-    const data = await getCompanies();
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    // Solo mostramos las empresas del usuario actual
+    // Si es el admin, podría ver todas, pero el requisito dice que cada usuario ve las suyas.
+    // Para el CRM de usuario común, filtramos por su UID.
+    const isAdmin = user.email === 'bbaconsultor@gmail.com';
+    const data = await getCompanies(isAdmin ? undefined : user.uid);
     setCompanies(data);
   };
 

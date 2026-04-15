@@ -12,18 +12,23 @@ import {
   Target,
   Search,
   ShoppingBag,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
+  Megaphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { auth } from '../firebase';
 import { getCompanies, saveDiagnostic, getLatestDiagnostic } from '../services/dbService';
 import { generateDiagnosticReport, DiagnosticResult } from '../services/geminiService';
 import { diagnosticCategories } from '../constants/diagnosticQuestions';
+import { marketingDiagnosticCategories } from '../constants/marketingDiagnosticQuestions';
 import { generatePDFReport } from '../services/pdfService';
 
 type Step = 'landing' | 'company-select' | 'existing-diagnostic' | 'questions' | 'loading' | 'result';
+type DiagnosticType = 'digital' | 'marketing';
 
 export default function DiagnosticForm() {
   const [step, setStep] = useState<Step>('landing');
+  const [diagnosticType, setDiagnosticType] = useState<DiagnosticType>('digital');
   const [companies, setCompanies] = useState<any[]>([]);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [existingDiagnostic, setExistingDiagnostic] = useState<any>(null);
@@ -32,11 +37,13 @@ export default function DiagnosticForm() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<DiagnosticResult | null>(null);
 
+  const categories = diagnosticType === 'digital' ? diagnosticCategories : marketingDiagnosticCategories;
+
   const handleCompanySelect = async (companyId: string) => {
     setSelectedCompanyId(companyId);
     if (!companyId) return;
 
-    const latest = await getLatestDiagnostic(companyId);
+    const latest = await getLatestDiagnostic(companyId, diagnosticType);
     if (latest) {
       setExistingDiagnostic(latest);
       setStep('existing-diagnostic');
@@ -62,15 +69,19 @@ export default function DiagnosticForm() {
 
   useEffect(() => {
     const fetchCompanies = async () => {
-      const data = await getCompanies();
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      const isAdmin = user.email === 'bbaconsultor@gmail.com';
+      const data = await getCompanies(isAdmin ? undefined : user.uid);
       setCompanies(data);
     };
     fetchCompanies();
   }, []);
 
-  const currentCategory = diagnosticCategories[currentCategoryIndex];
+  const currentCategory = categories[currentCategoryIndex];
   const currentQuestion = currentCategory.questions[currentQuestionIndex];
-  const totalQuestions = diagnosticCategories.reduce((acc, cat) => acc + cat.questions.length, 0);
+  const totalQuestions = categories.reduce((acc, cat) => acc + cat.questions.length, 0);
   const questionsAnswered = Object.keys(answers).length;
   const progress = (questionsAnswered / totalQuestions) * 100;
 
@@ -80,7 +91,7 @@ export default function DiagnosticForm() {
 
     if (currentQuestionIndex < currentCategory.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else if (currentCategoryIndex < diagnosticCategories.length - 1) {
+    } else if (currentCategoryIndex < categories.length - 1) {
       setCurrentCategoryIndex(currentCategoryIndex + 1);
       setCurrentQuestionIndex(0);
     } else {
@@ -91,10 +102,11 @@ export default function DiagnosticForm() {
   const submitDiagnostic = async (finalAnswers: any) => {
     setStep('loading');
     try {
-      const report = await generateDiagnosticReport(finalAnswers);
+      const report = await generateDiagnosticReport(finalAnswers, diagnosticType);
       await saveDiagnostic({
         companyId: selectedCompanyId,
         answers: finalAnswers,
+        type: diagnosticType,
         ...report
       });
       setResult(report);
@@ -114,54 +126,112 @@ export default function DiagnosticForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full max-w-4xl space-y-12"
+            className="w-full max-w-5xl space-y-12"
           >
-            <div className="bg-slate-900 rounded-3xl p-12 text-white relative overflow-hidden border border-slate-800 shadow-2xl">
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <Rocket size={200} />
-              </div>
-              
-              <div className="relative z-10 space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-widest border border-indigo-500/30">
-                  <Sparkles size={14} />
-                  Módulo de Diagnóstico
+            <div className="text-center space-y-4">
+              <h1 className="text-5xl font-bold italic serif text-slate-900">Módulos de Diagnóstico</h1>
+              <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                Selecciona el tipo de evaluación que deseas realizar para tu empresa. 
+                Nuestra IA analizará tus respuestas para generar un plan estratégico personalizado.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Digital Maturity Card */}
+              <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden border border-slate-800 shadow-2xl group hover:scale-[1.02] transition-all duration-500">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Rocket size={160} />
                 </div>
                 
-                <h1 className="text-5xl font-bold leading-tight italic serif">
-                  Diagnóstico de <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-                    Madurez Digital
-                  </span>
-                </h1>
-                
-                <p className="text-slate-400 text-lg max-w-xl leading-relaxed">
-                  Evalúa el nivel de digitalización de tu empresa en 7 dimensiones clave, incluyendo Inteligencia Artificial. Obtén un informe personalizado con recomendaciones concretas.
-                </p>
+                <div className="relative z-10 space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 text-indigo-300 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-500/30">
+                    <Sparkles size={12} />
+                    Transformación Digital
+                  </div>
+                  
+                  <h2 className="text-3xl font-bold leading-tight italic serif">
+                    Diagnóstico de <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+                      Madurez Digital
+                    </span>
+                  </h2>
+                  
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Evalúa la digitalización en 8 dimensiones clave: Gestión, Marketing, E-commerce, Automatización, Datos, Infraestructura, IA y Estado.
+                  </p>
 
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <button 
-                    onClick={() => setStep('company-select')}
-                    className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-2xl font-bold hover:scale-105 transition-transform flex items-center gap-3 shadow-lg shadow-indigo-500/25"
-                  >
-                    <Rocket size={20} />
-                    Iniciar diagnóstico gratuito
-                  </button>
-                  <div className="flex items-center gap-2 px-6 py-4 bg-slate-800/50 rounded-2xl border border-slate-700 text-slate-300">
-                    <Clock size={18} />
-                    <span className="text-sm font-medium">12-18 minutos • 21 preguntas</span>
+                  <div className="pt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-slate-400 text-xs">
+                      <Clock size={14} />
+                      <span>15 min • 21 preguntas</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        setDiagnosticType('digital');
+                        setStep('company-select');
+                      }}
+                      className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+                    >
+                      Empezar
+                      <ArrowRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Marketing Digital Card */}
+              <div className="bg-white rounded-[2.5rem] p-10 text-slate-900 relative overflow-hidden border border-slate-200 shadow-2xl group hover:scale-[1.02] transition-all duration-500">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Megaphone size={160} />
+                </div>
+                
+                <div className="relative z-10 space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-rose-500/20">
+                    <TrendingUpIcon size={12} />
+                    Crecimiento de Ventas
+                  </div>
+                  
+                  <h2 className="text-3xl font-bold leading-tight italic serif">
+                    Diagnóstico de <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
+                      Marketing Digital
+                    </span>
+                  </h2>
+                  
+                  <p className="text-slate-500 text-sm leading-relaxed">
+                    Analiza tu estrategia de marca, presencia web, redes sociales, pauta publicitaria y analítica para maximizar tu captación de clientes.
+                  </p>
+
+                  <div className="pt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-slate-400 text-xs">
+                      <Clock size={14} />
+                      <span>10 min • 15 preguntas</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        setDiagnosticType('marketing');
+                        setStep('company-select');
+                      }}
+                      className="px-6 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-500 transition-colors flex items-center gap-2 shadow-lg shadow-rose-500/20"
+                    >
+                      Empezar
+                      <ArrowRight size={18} />
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {diagnosticCategories.map((cat) => (
-                <div key={cat.id} className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl hover:border-slate-700 transition-colors group">
-                  <div className="text-3xl mb-4 group-hover:scale-110 transition-transform inline-block">{cat.icon}</div>
-                  <h3 className="text-white font-bold mb-1">{cat.title}</h3>
-                  <p className="text-slate-500 text-xs">3 preguntas clave</p>
-                </div>
-              ))}
+            <div className="pt-8 border-t border-slate-200">
+              <h3 className="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-8">Dimensiones evaluadas</h3>
+              <div className="flex flex-wrap justify-center gap-4">
+                {(diagnosticType === 'digital' ? diagnosticCategories : marketingDiagnosticCategories).map((cat) => (
+                  <div key={cat.id} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-100 rounded-full shadow-sm">
+                    <span>{cat.icon}</span>
+                    <span className="text-xs font-bold text-slate-600">{cat.title}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
@@ -352,7 +422,9 @@ export default function DiagnosticForm() {
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-500/30 mb-4">
                     <Sparkles size={12} /> Módulo 3 • Generado con IA
                   </div>
-                  <h2 className="text-4xl font-bold italic serif">Plan de Transformación Digital</h2>
+                  <h2 className="text-4xl font-bold italic serif">
+                    {diagnosticType === 'digital' ? 'Plan de Transformación Digital' : 'Plan de Marketing Digital'}
+                  </h2>
                   <p className="text-slate-400 mt-2">Plan personalizado generado automáticamente basado en tu diagnóstico. Roadmap de 12 meses con tecnologías, presupuesto y cronograma.</p>
                 </div>
                 <div className="flex gap-3">
@@ -366,7 +438,7 @@ export default function DiagnosticForm() {
                     onClick={() => {
                       const company = companies.find(c => c.id === selectedCompanyId);
                       const readableAnswers: { question: string, answer: string }[] = [];
-                      diagnosticCategories.forEach(cat => {
+                      categories.forEach(cat => {
                         cat.questions.forEach(q => {
                           const val = answers[q.id];
                           if (val !== undefined) {

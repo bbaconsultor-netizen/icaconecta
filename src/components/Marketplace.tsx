@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, ExternalLink, Search, Filter, Megaphone, Wallet, LayoutGrid, Cpu, ShoppingCart } from 'lucide-react';
+import { ShoppingBag, ExternalLink, Search, Filter, Megaphone, Wallet, LayoutGrid, Cpu, ShoppingCart, Building2 } from 'lucide-react';
 import { getSolutions } from '../services/dbService';
 
 const getCategoryIcon = (category: string) => {
@@ -9,6 +9,7 @@ const getCategoryIcon = (category: string) => {
     case 'ERP': return <LayoutGrid size={24} />;
     case 'IA': return <Cpu size={24} />;
     case 'E-commerce': return <ShoppingCart size={24} />;
+    case 'Estado': return <Building2 size={24} />;
     default: return <ShoppingBag size={24} />;
   }
 };
@@ -26,7 +27,7 @@ export default function Marketplace() {
     fetchSolutions();
   }, []);
 
-  const categories = ['Todas', 'ERP', 'IA', 'E-commerce', 'Marketing', 'Finanzas'];
+  const categories = ['Todas', 'ERP', 'IA', 'E-commerce', 'Marketing', 'Finanzas', 'Estado'];
 
   const filteredSolutions = solutions.filter(s => 
     (category === 'Todas' || s.category === category) &&
