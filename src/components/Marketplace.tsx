@@ -38,8 +38,8 @@ export default function Marketplace() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Marketplace de Soluciones Digitales</h1>
-        <p className="text-slate-500">Directorio articulado de proveedores y herramientas para la transformación.</p>
+        <h1 className="text-2xl font-bold text-slate-900">Herramientas Digitales</h1>
+        <p className="text-slate-500">Directorio articulado de proveedores y soluciones para la transformación.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -47,7 +47,7 @@ export default function Marketplace() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
           <input 
             type="text" 
-            placeholder="Buscar soluciones..."
+            placeholder="Buscar herramientas..."
             className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

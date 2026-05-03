@@ -126,7 +126,7 @@ export const generatePDFReport = (result: DiagnosticResult, companyName: string,
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150);
-    doc.text(`Página ${i} de ${pageCount} - Generado por CITE Nazca con Inteligencia Artificial`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+    doc.text(`Página ${i} de ${pageCount} - Generado por Ica Conecta con Inteligencia Artificial`, pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
   }
 
   doc.save(`Plan_Transformacion_${companyName.replace(/\s+/g, '_')}.pdf`);

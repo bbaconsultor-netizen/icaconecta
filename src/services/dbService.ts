@@ -19,6 +19,82 @@ export const diagnosticsCol = collection(db, 'diagnostics');
 export const solutionsCol = collection(db, 'solutions');
 export const indicatorsCol = collection(db, 'indicators');
 export const coursesCol = collection(db, 'courses');
+export const productsCol = collection(db, 'products');
+export const usersCol = collection(db, 'users');
+
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+  }
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+    },
+    operationType,
+    path
+  }
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
+
+// Profile Operations
+export const getUserProfile = async (uid: string) => {
+  const path = `users/${uid}`;
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (userDoc.exists()) {
+      return userDoc.data();
+    }
+    return null;
+  } catch (error) {
+    return handleFirestoreError(error, OperationType.GET, path);
+  }
+};
+
+export const updateUserProfile = async (uid: string, profileData: any) => {
+  const path = `users/${uid}`;
+  try {
+    const userRef = doc(db, 'users', uid);
+    return await updateDoc(userRef, {
+      ...profileData,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error: any) {
+    if (error.code === 'not-found') {
+      // If doc doesn't exist, create it
+      const userRef = doc(db, 'users', uid);
+      return await addDoc(usersCol, {
+        ...profileData,
+        uid: uid,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+    return handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+};
 
 // CRM Operations
 export const addCompany = async (companyData: any) => {
@@ -169,4 +245,58 @@ export const updateCourse = async (id: string, courseData: any) => {
 export const deleteCourse = async (id: string) => {
   const courseRef = doc(db, 'courses', id);
   return await deleteDoc(courseRef);
+};
+
+// Product Operations
+export const getProducts = async (category?: string) => {
+  const path = 'products';
+  try {
+    let q = query(productsCol, orderBy('createdAt', 'desc'));
+    if (category && category !== 'Todas') {
+      q = query(productsCol, where('category', '==', category), orderBy('createdAt', 'desc'));
+    }
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+  } catch (error) {
+    return handleFirestoreError(error, OperationType.GET, path);
+  }
+};
+
+export const addProduct = async (productData: any) => {
+  const path = 'products';
+  const user = auth.currentUser;
+  try {
+    return await addDoc(productsCol, {
+      ...productData,
+      uid: user?.uid,
+      sellerName: user?.displayName || 'Vendedor Anónimo',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    return handleFirestoreError(error, OperationType.CREATE, path);
+  }
+};
+
+export const updateProduct = async (id: string, productData: any) => {
+  const path = `products/${id}`;
+  try {
+    const productRef = doc(db, 'products', id);
+    return await updateDoc(productRef, {
+      ...productData,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    return handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+};
+
+export const deleteProduct = async (id: string) => {
+  const path = `products/${id}`;
+  try {
+    const productRef = doc(db, 'products', id);
+    return await deleteDoc(productRef);
+  } catch (error) {
+    return handleFirestoreError(error, OperationType.DELETE, path);
+  }
 };

@@ -104,7 +104,7 @@ export const diagnosticCategories: Category[] = [
         options: [
           { value: 1, label: 'No' },
           { value: 2, label: 'Solo por WhatsApp/DM' },
-          { value: 3, label: 'Marketplace externo (Mercado Libre)' },
+          { value: 3, label: 'Mercado externo (Mercado Libre)' },
           { value: 4, label: 'Tienda online propia' },
           { value: 5, label: 'Ecosistema e-commerce integrado' }
         ]

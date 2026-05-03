@@ -2,17 +2,23 @@
   "entities": {
     "Company": {
       "title": "Empresa",
-      "description": "Información de la MIPYME atendida por el CITE Nazca.",
+      "description": "Información de la MIPYME atendida por Ica Conecta.",
       "type": "object",
       "properties": {
         "ruc": { "type": "string", "description": "RUC de la empresa (11 dígitos)." },
         "name": { "type": "string", "description": "Razón social o nombre comercial." },
+        "legalRepresentative": { "type": "string", "description": "Nombre del representante legal." },
         "sector": { "type": "string", "description": "Sector económico (e.g., Agro, Comercio, Manufactura)." },
         "contactName": { "type": "string", "description": "Nombre del contacto principal." },
         "email": { "type": "string", "description": "Correo electrónico de contacto." },
         "phone": { "type": "string", "description": "Teléfono de contacto." },
+        "website": { "type": "string", "description": "Página web de la empresa." },
+        "address": { "type": "string", "description": "Dirección física (Calle, Número, etc.)." },
+        "region": { "type": "string", "description": "Región / Departamento." },
+        "province": { "type": "string", "description": "Provincia." },
+        "district": { "type": "string", "description": "Distrito." },
         "maturityLevel": { "type": "string", "enum": ["Inicial", "Básico", "Intermedio", "Avanzado"], "description": "Nivel de madurez digital actual." },
-        "status": { "type": "string", "enum": ["Sensibilizada", "Diagnosticada", "En Transformación", "Transformada"], "description": "Estado en el proceso CITE Nazca." },
+        "status": { "type": "string", "enum": ["Sensibilizada", "Diagnosticada", "En Transformación", "Transformada"], "description": "Estado en el proceso Ica Conecta." },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
@@ -73,6 +79,35 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["title", "description", "url", "dimension"]
+    },
+    "Product": {
+      "title": "Producto",
+      "description": "Producto publicado por un usuario en el Marketplace.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "ID del usuario vendedor." },
+        "sellerName": { "type": "string", "description": "Nombre del vendedor o empresa." },
+        "title": { "type": "string", "description": "Nombre del producto." },
+        "description": { "type": "string", "description": "Características y detalles del producto." },
+        "price": { "type": "number", "description": "Precio de venta." },
+        "category": { "type": "string", "enum": ["Agricultura", "Agroindustria", "Pesca y Acuicultura", "Turismo y Artesanía", "Minería", "Industria"], "description": "Categoría del producto." },
+        "imageUrl": { "type": "string", "description": "URL de la fotografía del producto." },
+        "status": { "type": "string", "enum": ["Disponible", "Vendido", "Pausado"], "description": "Estado de la oferta." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "title", "price", "category", "status"]
+    },
+    "User": {
+      "title": "Perfil de Usuario",
+      "description": "Información extendida del colaborador de Ica Conecta.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "position": { "type": "string", "description": "Cargo o función en la organización." },
+        "phone": { "type": "string", "description": "Número de contacto." },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "firestore": {
@@ -80,6 +115,8 @@
     "/diagnostics/{diagnosticId}": { "schema": "Diagnostic", "description": "Historial de diagnósticos realizados." },
     "/solutions/{solutionId}": { "schema": "Solution", "description": "Marketplace de herramientas digitales." },
     "/indicators/{indicatorId}": { "schema": "Indicator", "description": "Datos históricos para monitoreo mensual." },
-    "/courses/{courseId}": { "schema": "Course", "description": "Material educativo por dimensión." }
+    "/courses/{courseId}": { "schema": "Course", "description": "Material educativo por dimensión." },
+    "/products/{productId}": { "schema": "Product", "description": "Marketplace de productos de usuarios." },
+    "/users/{userId}": { "schema": "User", "description": "Perfiles extendidos de usuarios." }
   }
 }

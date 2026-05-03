@@ -74,7 +74,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard de Indicadores</h1>
-          <p className="text-slate-500">Monitoreo en tiempo real del impacto CITE Nazca.</p>
+          <p className="text-slate-500 font-medium">Monitoreo en tiempo real del impacto de Ica Conecta en la región.</p>
         </div>
         <div className="bg-white px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600">
           Marzo 2026

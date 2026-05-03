@@ -311,7 +311,7 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('marketplace')}
           className={`px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'marketplace' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
-          <ShoppingBag size={16} /> Marketplace
+          <ShoppingBag size={16} /> Herramientas
         </button>
         <button 
           onClick={() => setActiveTab('companies')}

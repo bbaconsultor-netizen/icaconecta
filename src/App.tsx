@@ -10,7 +10,10 @@ import {
   TrendingUp,
   Settings,
   ShieldAlert,
-  BookOpen
+  BookOpen,
+  Store,
+  MapPin,
+  User
 } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -21,8 +24,11 @@ import Dashboard from './components/Dashboard';
 import CRM from './components/CRM';
 import DiagnosticForm from './components/DiagnosticForm';
 import Marketplace from './components/Marketplace';
+import ProductMarketplace from './components/ProductMarketplace';
 import Courses from './components/Courses';
 import AdminPanel from './components/AdminPanel';
+import Contact from './components/Contact';
+import Profile from './components/Profile';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -61,12 +67,12 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <TrendingUp className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-slate-900 mb-2 italic serif">Cite Nazca</h1>
-          <p className="text-slate-600 mb-8">Centro de Innovación Productiva y Transferencia Tecnológica</p>
+          <img src="input_file_3.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
+          <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
+          <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
           <button 
             onClick={handleLogin}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
           >
             Ingresar con Google
           </button>
@@ -82,14 +88,14 @@ export default function App() {
       <div className="min-h-screen bg-slate-50 flex">
         {/* Sidebar */}
         <aside className={`
-          fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 z-50 w-64 bg-brand-primary text-white transform transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static
         `}>
-          <div className="p-6">
-            <h2 className="text-xl font-bold flex items-center gap-2 italic serif">
-              <TrendingUp className="text-indigo-400" />
-              Cite Nazca
+          <div className="p-6 border-b border-white/10 flex items-center gap-3">
+            <img src="input_file_3.png" alt="Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 shadow-sm" />
+            <h2 className="text-xl font-black italic tracking-tighter">
+              Ica Conecta
             </h2>
           </div>
           
@@ -97,24 +103,27 @@ export default function App() {
             <SidebarLink to="/" icon={<LayoutDashboard size={20} />} label="Dashboard" onClick={() => setIsSidebarOpen(false)} />
             <SidebarLink to="/crm" icon={<Users size={20} />} label="Gestión CRM" onClick={() => setIsSidebarOpen(false)} />
             <SidebarLink to="/diagnostic" icon={<ClipboardCheck size={20} />} label="Diagnóstico" onClick={() => setIsSidebarOpen(false)} />
-            <SidebarLink to="/marketplace" icon={<ShoppingBag size={20} />} label="Marketplace" onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/product-marketplace" icon={<Store size={20} />} label="Marketplace" onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/marketplace" icon={<ShoppingBag size={20} />} label="Herramientas" onClick={() => setIsSidebarOpen(false)} />
             <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="Cursos" onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/contact" icon={<MapPin size={20} />} label="Contacto" onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/profile" icon={<User size={20} />} label="Mi Perfil" onClick={() => setIsSidebarOpen(false)} />
             {isAdmin && (
               <SidebarLink to="/admin" icon={<Settings size={20} />} label="Administración" onClick={() => setIsSidebarOpen(false)} />
             )}
           </nav>
 
-          <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+          <div className="absolute bottom-0 w-full p-4 border-t border-white/10">
             <div className="flex items-center gap-3 mb-4 px-2">
-              <img src={user.photoURL} alt={user.displayName} className="w-8 h-8 rounded-full" referrerPolicy="no-referrer" />
+              <img src={user.photoURL} alt={user.displayName} className="w-8 h-8 rounded-full ring-2 ring-brand-teal/30" referrerPolicy="no-referrer" />
               <div className="overflow-hidden">
-                <p className="text-sm font-medium truncate">{user.displayName}</p>
-                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                <p className="text-sm font-bold truncate">{user.displayName}</p>
+                <p className="text-xs text-white/50 truncate">{user.email}</p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-2 py-2 text-slate-400 hover:text-white transition-colors"
+              className="w-full flex items-center gap-2 px-2 py-2 text-white/60 hover:text-white transition-colors text-sm font-medium"
             >
               <LogOut size={18} />
               <span>Cerrar Sesión</span>
@@ -136,8 +145,11 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/crm" element={<CRM />} />
               <Route path="/diagnostic" element={<DiagnosticForm />} />
+              <Route path="/product-marketplace" element={<ProductMarketplace />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/courses" element={<Courses />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/profile" element={<Profile />} />
               {isAdmin && <Route path="/admin" element={<AdminPanel />} />}
             </Routes>
           </div>
@@ -160,10 +172,12 @@ function SidebarLink({ to, icon, label, onClick }: { to: string, icon: React.Rea
     <Link 
       to={to} 
       onClick={onClick}
-      className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors"
+      className="flex items-center gap-3 px-4 py-3 text-white/70 hover:bg-white/10 hover:text-white rounded-xl transition-all duration-200 group"
     >
-      {icon}
-      <span className="font-medium">{label}</span>
+      <div className="group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+      <span className="font-semibold tracking-tight">{label}</span>
     </Link>
   );
 }
