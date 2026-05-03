@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import axios from "axios";
 import { fileURLToPath } from 'url';
@@ -11,6 +10,11 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 // API Route - Proxy SUNAT
 app.get("/api/sunat/:ruc", async (req, res) => {
