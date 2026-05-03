@@ -56,14 +56,8 @@ app.get("/api/sunat/:ruc", async (req, res) => {
   }
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === "production") {
-  const distPath = path.join(process.cwd(), 'dist');
-  app.use(express.static(distPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-} else {
+// Serve static files / middleware
+if (process.env.NODE_ENV !== "production") {
   // Development mode: Vite middleware
   const startVite = async () => {
     const { createServer: createViteServer } = await import('vite');
@@ -72,13 +66,17 @@ if (process.env.NODE_ENV === "production") {
       appType: "spa",
     });
     app.use(vite.middlewares);
+    
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
   };
   startVite();
-}
-
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+} else {
+  // In production (Vercel), we only handle /api routes
+  // The static frontend is handled by Vercel rewrites
+  app.get('*', (req, res) => {
+    res.status(404).json({ error: "API route not found" });
   });
 }
 
