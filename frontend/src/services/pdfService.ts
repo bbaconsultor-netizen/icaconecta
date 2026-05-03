@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { autoTable } from 'jspdf-autotable';
 import { DiagnosticResult } from './geminiService';
 
 export const generatePDFReport = (result: DiagnosticResult, companyName: string, userAnswers: { question: string, answer: string }[]) => {
