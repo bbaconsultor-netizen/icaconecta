@@ -70,13 +70,15 @@ export default function CRM() {
 
     setIsConsulting(true);
     try {
-      const response = await fetch(`/api/sunat/${newCompany.ruc}`);
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${BACKEND_URL}/api/sunat/${newCompany.ruc}`);
       const result = await response.json();
 
       if (result.success && result.data) {
         fillCompanyData(result.data);
       } else {
-        alert(result.message || "No se pudo obtener información oficial de SUNAT para este RUC. Verifica que el número sea correcto y que tus credenciales de API estén vigentes.");
+        const msg = result.detail?.message || result.message || "No se pudo obtener información oficial de SUNAT para este RUC. Verifica que el número sea correcto y que tus credenciales de API estén vigentes.";
+        alert(msg);
       }
     } catch (error: any) {
       console.error("Error consultando proxy SUNAT:", error);
