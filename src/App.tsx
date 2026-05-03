@@ -66,10 +66,10 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <img src="input_file_3.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
-          <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
-          <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <img src="/logo.jpg" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
+            <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
+            <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
           <button 
             onClick={handleLogin}
             className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
@@ -93,7 +93,7 @@ export default function App() {
           lg:translate-x-0 lg:static
         `}>
           <div className="p-6 border-b border-white/10 flex items-center gap-3">
-            <img src="input_file_3.png" alt="Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 shadow-sm" />
+            <img src="/logo.jpg" alt="Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 shadow-sm" />
             <h2 className="text-xl font-black italic tracking-tighter">
               Ica Conecta
             </h2>
