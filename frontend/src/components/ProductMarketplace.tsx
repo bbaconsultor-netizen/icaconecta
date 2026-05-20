@@ -22,12 +22,14 @@ import { es } from 'date-fns/locale';
 
 const CATEGORIES = [
   "Todas",
-  "Agricultura", 
-  "Agroindustria", 
-  "Pesca y Acuicultura", 
-  "Turismo y Artesanía", 
-  "Minería", 
-  "Industria"
+  "Frutas",
+  "Hortalizas",
+  "Tubérculos",
+  "Granos y menestras",
+  "Agroindustria",
+  "Pecuario",
+  "Insumos",
+  "Servicios"
 ];
 
 export default function ProductMarketplace() {
@@ -46,11 +48,10 @@ export default function ProductMarketplace() {
     title: '',
     description: '',
     price: '',
-    category: 'Agricultura',
+    category: 'Frutas',
     imageUrl: '',
     status: 'Disponible'
   });
-
   const user = auth.currentUser;
   const isAdmin = user?.email === 'bbaconsultor@gmail.com';
 
@@ -202,7 +203,7 @@ export default function ProductMarketplace() {
       title: '',
       description: '',
       price: '',
-      category: 'Agricultura',
+      category: 'Frutas',
       imageUrl: '',
       status: 'Disponible'
     });
