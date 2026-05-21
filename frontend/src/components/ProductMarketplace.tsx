@@ -12,7 +12,8 @@ import {
   Calendar,
   AlertCircle,
   Upload,
-  Clock
+  Clock,
+  Pencil
 } from 'lucide-react';
 import { auth } from '../firebase';
 import { getProducts, addProduct, deleteProduct, updateProduct } from '../services/dbService';
@@ -351,7 +352,7 @@ export default function ProductMarketplace() {
                             className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                             title="Editar"
                           >
-                            <Plus className="rotate-45" size={20} />
+                            <Pencil size={18} />
                           </button>
                           <button 
                             onClick={() => handleDelete(product.id)}
