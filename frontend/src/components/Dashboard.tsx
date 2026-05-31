@@ -32,8 +32,9 @@ export default function Dashboard() {
         const user = auth.currentUser;
         if (!user) return;
 
-        const isAdmin = user.email === 'bbaconsultor@gmail.com';
-        const companies = await getCompanies(isAdmin ? undefined : user.uid);
+        // Dashboard muestra indicadores GLOBALES de toda la plataforma
+        // (todas las empresas de todos los usuarios, incluida la del usuario actual)
+        const companies = await getCompanies();
         
         const counts = {
           total: companies.length,
