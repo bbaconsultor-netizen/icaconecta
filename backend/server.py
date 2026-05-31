@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Any, Dict, Literal
+from typing import Any, Dict, List, Literal
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -216,3 +216,71 @@ async def generate_diagnostic(payload: DiagnosticRequest):
         raise HTTPException(status_code=502, detail="La IA devolvió una respuesta inválida.")
 
     return result
+
+
+# ===================== ASISTENTE VIRTUAL =====================
+
+class ChatHistoryItem(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class AssistantRequest(BaseModel):
+    message: str
+    history: List[ChatHistoryItem] = []
+    session_id: str = "anon"
+
+
+ASSISTANT_SYSTEM_PROMPT = """Eres un asesor experto en TRANSFORMACIÓN DIGITAL para el sector AGROPECUARIO y AGRÍCOLA en Perú, especialmente enfocado en MIPYMEs de la región Ica y el sur del país.
+
+Tu rol:
+- Brindar asesoría práctica, breve y aterrizada en herramientas, tecnologías y procesos de digitalización para productores agrícolas, ganaderos, agroindustriales y empresas de servicios del sector.
+- Cubrir temas como: ERP agrícola, IoT/sensores, riego inteligente, drones, blockchain de trazabilidad, e-commerce de productos frescos, marketing digital agro, plataformas estatales (SUNAT, SENASA, MIDAGRI, Sierra y Selva Exportadora), facturación electrónica, gestión de cosechas, control de inventarios perecederos, etc.
+- Recomendar tecnologías reales disponibles en el mercado peruano y latinoamericano (Ej: Agrobit, Cropwise, Hectare, Khipu, Culqi, Nubefact, Siembra, etc.).
+- Sugerir presupuestos realistas en SOLES (S/.) para MIPYMEs.
+
+Estilo de respuestas:
+- Responde SIEMPRE en español, con tono cercano y profesional.
+- Sé CONCISO: máximo 5 párrafos cortos o lista de bullets.
+- Si te preguntan algo fuera del ámbito agropecuario/agrícola/digitalización, redirígelo amablemente al foco: "Mi especialidad es transformación digital agropecuaria. ¿Te puedo ayudar con algún tema de digitalización en tu negocio agrícola o ganadero?"
+- No inventes datos ni cifras; si no estás seguro, dilo.
+- Termina cada respuesta con una pregunta de seguimiento útil o una acción concreta sugerida.
+"""
+
+
+@app.post("/api/assistant/chat")
+async def assistant_chat(payload: AssistantRequest):
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY no configurada.")
+
+    if not payload.message or not payload.message.strip():
+        raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío.")
+
+    chat = (
+        LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=payload.session_id or "anon-icaconecta",
+            system_message=ASSISTANT_SYSTEM_PROMPT,
+        )
+        .with_model("gemini", "gemini-3-flash-preview")
+    )
+
+    # Construimos un contexto compacto con las últimas interacciones
+    history_text = ""
+    for item in payload.history[-10:]:
+        prefix = "Usuario" if item.role == "user" else "Asistente"
+        history_text += f"{prefix}: {item.content}\n"
+
+    full_prompt = (
+        f"{history_text}Usuario: {payload.message}\nAsistente:"
+        if history_text
+        else payload.message
+    )
+
+    try:
+        response = await chat.send_message(UserMessage(text=full_prompt))
+    except Exception as exc:
+        logger.exception("Error llamando al asistente IA")
+        raise HTTPException(status_code=502, detail=f"Error del asistente: {exc}")
+
+    return {"reply": response.strip()}

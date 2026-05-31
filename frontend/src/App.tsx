@@ -29,6 +29,7 @@ import Courses from './components/Courses';
 import AdminPanel from './components/AdminPanel';
 import Contact from './components/Contact';
 import Profile from './components/Profile';
+import ChatAssistant from './components/ChatAssistant';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -162,6 +163,9 @@ export default function App() {
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
+
+        {/* Asistente Virtual Flotante */}
+        <ChatAssistant />
       </div>
     </Router>
   );
