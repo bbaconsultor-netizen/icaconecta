@@ -31,6 +31,47 @@ import Contact from './components/Contact';
 import Profile from './components/Profile';
 import ChatAssistant from './components/ChatAssistant';
 import AnalyticsTracker from './components/AnalyticsTracker';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import Terms from './components/Terms';
+import { useLocation } from 'react-router-dom';
+
+// Pantalla pública de bienvenida + acceso a páginas legales
+function PublicShell({ onLogin }: { onLogin: () => void }) {
+  return (
+    <Routes>
+      <Route path="/privacidad" element={<PrivacyPolicy />} />
+      <Route path="/terminos" element={<Terms />} />
+      <Route
+        path="*"
+        element={
+          <div className="min-h-screen flex flex-col bg-slate-100 p-4">
+            <div className="flex-1 flex items-center justify-center">
+              <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+                <img src="/logo.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
+                <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
+                <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
+                <button
+                  data-testid="login-google-btn"
+                  onClick={onLogin}
+                  className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
+                >
+                  Ingresar con Google
+                </button>
+              </div>
+            </div>
+            <footer className="text-center text-xs text-slate-500 pb-4 pt-6 space-x-3">
+              <Link to="/privacidad" data-testid="link-privacy" className="hover:text-brand-teal hover:underline transition-colors">Política de Privacidad</Link>
+              <span>·</span>
+              <Link to="/terminos" data-testid="link-terms" className="hover:text-brand-teal hover:underline transition-colors">Términos y Condiciones</Link>
+              <span>·</span>
+              <span>© {new Date().getFullYear()} Ica Conecta</span>
+            </footer>
+          </div>
+        }
+      />
+    </Routes>
+  );
+}
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -67,19 +108,10 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-            <img src="/logo.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
-            <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
-            <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
-          <button 
-            onClick={handleLogin}
-            className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
-          >
-            Ingresar con Google
-          </button>
-        </div>
-      </div>
+      <Router>
+        <PublicShell onLogin={handleLogin} />
+        <AnalyticsTracker />
+      </Router>
     );
   }
 
@@ -152,6 +184,8 @@ export default function App() {
               <Route path="/courses" element={<Courses />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/privacidad" element={<PrivacyPolicy />} />
+              <Route path="/terminos" element={<Terms />} />
               {isAdmin && <Route path="/admin" element={<AdminPanel />} />}
             </Routes>
           </div>
