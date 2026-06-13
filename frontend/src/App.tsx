@@ -30,6 +30,7 @@ import AdminPanel from './components/AdminPanel';
 import Contact from './components/Contact';
 import Profile from './components/Profile';
 import ChatAssistant from './components/ChatAssistant';
+import AnalyticsTracker from './components/AnalyticsTracker';
 
 export default function App() {
   const [user, setUser] = useState<any>(null);
@@ -166,6 +167,9 @@ export default function App() {
 
         {/* Asistente Virtual Flotante */}
         <ChatAssistant />
+
+        {/* Google Analytics — tracking de navegación SPA */}
+        <AnalyticsTracker />
       </div>
     </Router>
   );
