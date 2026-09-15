@@ -15,6 +15,7 @@ import {
   MapPin,
   User
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { seedDatabase } from './services/seedData';
@@ -38,38 +39,41 @@ import { useLocation } from 'react-router-dom';
 // Pantalla pública de bienvenida + acceso a páginas legales
 function PublicShell({ onLogin }: { onLogin: () => void }) {
   return (
-    <Routes>
-      <Route path="/privacidad" element={<PrivacyPolicy />} />
-      <Route path="/terminos" element={<Terms />} />
-      <Route
-        path="*"
-        element={
-          <div className="min-h-screen flex flex-col bg-slate-100 p-4">
-            <div className="flex-1 flex items-center justify-center">
-              <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-                <img src="/logo.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
-                <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
-                <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
-                <button
-                  data-testid="login-google-btn"
-                  onClick={onLogin}
-                  className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
-                >
-                  Ingresar con Google
-                </button>
+    <>
+      <Routes>
+        <Route path="/privacidad" element={<PrivacyPolicy />} />
+        <Route path="/terminos" element={<Terms />} />
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen flex flex-col bg-slate-100 p-4">
+              <div className="flex-1 flex items-center justify-center">
+                <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+                  <img src="/logo.png" alt="Ica Conecta Logo" className="w-64 h-auto mx-auto mb-6 object-contain" />
+                  <h1 className="text-4xl font-black text-brand-primary mb-2 italic tracking-tight">Ica Conecta</h1>
+                  <p className="text-slate-600 mb-8 font-medium">Mercado Regional Multisector & Transformación Digital</p>
+                  <button
+                    data-testid="login-google-btn"
+                    onClick={onLogin}
+                    className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-teal shadow-lg shadow-brand-teal/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    Ingresar con Google
+                  </button>
+                </div>
               </div>
+              <footer className="text-center text-xs text-slate-500 pb-4 pt-6 space-x-3">
+                <Link to="/privacidad" data-testid="link-privacy" className="hover:text-brand-teal hover:underline transition-colors">Política de Privacidad</Link>
+                <span>·</span>
+                <Link to="/terminos" data-testid="link-terms" className="hover:text-brand-teal hover:underline transition-colors">Términos y Condiciones</Link>
+                <span>·</span>
+                <span>© {new Date().getFullYear()} Ica Conecta</span>
+              </footer>
             </div>
-            <footer className="text-center text-xs text-slate-500 pb-4 pt-6 space-x-3">
-              <Link to="/privacidad" data-testid="link-privacy" className="hover:text-brand-teal hover:underline transition-colors">Política de Privacidad</Link>
-              <span>·</span>
-              <Link to="/terminos" data-testid="link-terms" className="hover:text-brand-teal hover:underline transition-colors">Términos y Condiciones</Link>
-              <span>·</span>
-              <span>© {new Date().getFullYear()} Ica Conecta</span>
-            </footer>
-          </div>
-        }
-      />
-    </Routes>
+          }
+        />
+      </Routes>
+      <Analytics />
+    </>
   );
 }
 
@@ -204,6 +208,9 @@ export default function App() {
 
         {/* Google Analytics — tracking de navegación SPA */}
         <AnalyticsTracker />
+        
+        {/* Vercel Web Analytics */}
+        <Analytics />
       </div>
     </Router>
   );
@@ -223,4 +230,3 @@ function SidebarLink({ to, icon, label, onClick }: { to: string, icon: React.Rea
     </Link>
   );
 }
-
